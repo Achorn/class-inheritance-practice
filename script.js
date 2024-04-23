@@ -14,14 +14,27 @@ window.addEventListener("load", (e) => {
       this.width = width;
       this.height = height;
       this.enemies = [];
+      this.enemyInterval = 1000;
+      this.enemyTimer = 0;
       this.#addNewEnemy();
       console.log(this.enemies);
     }
-    update() {
+    update(deltaTime) {
+      if (this.enemyTimer > this.enemyInterval) {
+        this.enemies = this.enemies.filter(
+          (object) => !object.markedForDeletion
+        );
+
+        this.#addNewEnemy();
+        this.enemyTimer = 0;
+      } else {
+        this.enemyTimer += deltaTime;
+      }
+
       this.enemies.forEach((enemy) => enemy.update());
     }
     draw() {
-      this.enemies.forEach((enemy) => enemy.draw());
+      this.enemies.forEach((enemy) => enemy.draw(this.ctx));
     }
 
     //# means private
@@ -33,16 +46,17 @@ window.addEventListener("load", (e) => {
   class Enemy {
     constructor(game) {
       this.game = game;
-      console.log(game);
       this.x = this.game.width;
       this.y = Math.random() * this.game.height;
       this.width = 100;
       this.height = 100;
+      this.markedForDeletion = false;
     }
     update() {
       this.x--;
+      if (this.x < 0 - this.width) this.markedForDeletion = true;
     }
-    draw() {
+    draw(ctx) {
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }
   }
@@ -54,7 +68,7 @@ window.addEventListener("load", (e) => {
     const deltaTime = timestamp - lastTime;
     lastTime = timestamp;
     //some code
-    game.update();
+    game.update(deltaTime);
     game.draw();
     requestAnimationFrame(animate);
   }
