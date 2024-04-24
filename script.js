@@ -14,7 +14,7 @@ window.addEventListener("load", (e) => {
       this.width = width;
       this.height = height;
       this.enemies = [];
-      this.enemyInterval = 1000;
+      this.enemyInterval = 100;
       this.enemyTimer = 0;
       this.#addNewEnemy();
       console.log(this.enemies);
@@ -31,7 +31,7 @@ window.addEventListener("load", (e) => {
         this.enemyTimer += deltaTime;
       }
 
-      this.enemies.forEach((enemy) => enemy.update());
+      this.enemies.forEach((enemy) => enemy.update(deltaTime));
     }
     draw() {
       this.enemies.forEach((enemy) => enemy.draw(this.ctx));
@@ -39,25 +39,47 @@ window.addEventListener("load", (e) => {
 
     //# means private
     #addNewEnemy() {
-      this.enemies.push(new Enemy(this));
+      this.enemies.push(new Worm(this));
     }
   }
 
   class Enemy {
     constructor(game) {
       this.game = game;
-      this.x = this.game.width;
-      this.y = Math.random() * this.game.height;
-      this.width = 100;
-      this.height = 100;
       this.markedForDeletion = false;
     }
-    update() {
-      this.x--;
+    update(deltaTime) {
+      this.x -= this.vx * deltaTime;
       if (this.x < 0 - this.width) this.markedForDeletion = true;
     }
     draw(ctx) {
-      ctx.fillRect(this.x, this.y, this.width, this.height);
+      ctx.drawImage(
+        this.image,
+        0,
+        0,
+        this.spriteWidth,
+        this.spriteHeight,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
+    }
+  }
+
+  class Worm extends Enemy {
+    constructor(game) {
+      // using enemy parent class and injecting game variable in enemies constructor
+      super(game);
+      this.spriteWidth = 229;
+      this.spriteHeight = 171;
+      this.width = this.spriteWidth * 0.5;
+      this.height = this.spriteHeight * 0.52;
+      this.x = this.game.width;
+      this.y = Math.random() * this.game.height;
+      //any element in DOM with id can be access just by calling its id
+      this.image = worm;
+      this.vx = Math.random() * 0.1 + 0.1;
     }
   }
 
