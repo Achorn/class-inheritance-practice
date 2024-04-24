@@ -40,6 +40,7 @@ window.addEventListener("load", (e) => {
     //# means private
     #addNewEnemy() {
       this.enemies.push(new Worm(this));
+      this.enemies.sort((a, b) => a.y - b.y);
     }
   }
 
