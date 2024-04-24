@@ -53,15 +53,26 @@ window.addEventListener("load", (e) => {
     constructor(game) {
       this.game = game;
       this.markedForDeletion = false;
+      this.frameX;
+      this.maxFrame = 5;
+      this.frameInterval = 100;
+      this.frameTimer = 0;
     }
     update(deltaTime) {
       this.x -= this.vx * deltaTime;
+      if (this.frameTimer > this.frameInterval) {
+        if (this.frameX < this.maxFrame) this.frameX++;
+        else this.frameX = 0;
+        this.frameTimer = 0;
+      } else {
+        this.frameTimer += deltaTime;
+      }
       if (this.x < 0 - this.width) this.markedForDeletion = true;
     }
     draw(ctx) {
       ctx.drawImage(
         this.image,
-        0,
+        this.frameX * this.spriteWidth,
         0,
         this.spriteWidth,
         this.spriteHeight,
@@ -136,6 +147,7 @@ window.addEventListener("load", (e) => {
     }
     update(deltaTime) {
       super.update(deltaTime);
+      if (this.y < 0 - this.height) this.markedForDeletion = true;
       this.y += this.vy * deltaTime;
       if (this.y > this.maxLength) this.vy *= -1;
     }
