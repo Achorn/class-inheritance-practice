@@ -16,8 +16,7 @@ window.addEventListener("load", (e) => {
       this.enemies = [];
       this.enemyInterval = 100;
       this.enemyTimer = 0;
-      this.#addNewEnemy();
-      console.log(this.enemies);
+      this.enemyTypes = ["worm", "ghost"];
     }
     update(deltaTime) {
       if (this.enemyTimer > this.enemyInterval) {
@@ -39,7 +38,13 @@ window.addEventListener("load", (e) => {
 
     //# means private
     #addNewEnemy() {
+      const randomEnemy =
+        this.enemyTypes[Math.floor(Math.random() * this.enemyTypes.length)];
+      if (randomEnemy == "worm") this.enemies.push(new Worm(this));
+      if (randomEnemy == "ghost") this.enemies.push(new Ghost(this));
       this.enemies.push(new Worm(this));
+
+      //keeps objects behind other objects that are lower on screen
       this.enemies.sort((a, b) => a.y - b.y);
     }
   }
@@ -81,6 +86,22 @@ window.addEventListener("load", (e) => {
       //any element in DOM with id can be access just by calling its id
       this.image = worm;
       this.vx = Math.random() * 0.1 + 0.1;
+    }
+  }
+
+  class Ghost extends Enemy {
+    constructor(game) {
+      // using enemy parent class and injecting game variable in enemies constructor
+      super(game);
+      this.spriteWidth = 261;
+      this.spriteHeight = 209;
+      this.width = this.spriteWidth * 0.5;
+      this.height = this.spriteHeight * 0.52;
+      this.x = this.game.width;
+      this.y = Math.random() * this.game.height;
+      //any element in DOM with id can be access just by calling its id
+      this.image = ghost;
+      this.vx = Math.random() * 0.2 + 0.1;
     }
   }
 
